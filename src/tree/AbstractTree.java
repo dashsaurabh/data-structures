@@ -2,6 +2,11 @@ package tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class AbstractTree<E> implements Tree<E> {
 
@@ -68,6 +73,23 @@ public abstract class AbstractTree<E> implements Tree<E> {
             postorderSubtree(c, snapshot);
 
         snapshot.add(p);
+    }
+
+    public Iterable<Position<E>> breadthFirst(){
+        List<Position<E>> snapshot = new ArrayList<>();
+
+        if(!isEmpty()) {
+            Queue<Position<E>> queue = new ConcurrentLinkedQueue<>();
+            queue.offer(root());
+            while (!queue.isEmpty()) {
+                Position<E> p = queue.remove();
+                snapshot.add(p);
+                for (Position<E> c : children(p))
+                    queue.offer(c);
+            }
+        }
+
+        return snapshot;
     }
 
 }
